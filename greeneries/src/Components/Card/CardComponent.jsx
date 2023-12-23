@@ -1,7 +1,15 @@
 import React from "react";
-import { Card, CardContent, CardMedia, Typography, Box } from "@mui/material";
-
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Box,
+  CardActionArea,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 const CardComponent = (props) => {
+  const theme = useTheme();
   return (
     <Card
       sx={{
@@ -19,36 +27,40 @@ const CardComponent = (props) => {
         boxSizing: "border-box",
       }}
     >
-      <CardMedia
-        component="img"
-        alt={props.item.name}
-        title={props.item.name}
-        image="https://via.placeholder.com/150"
-      />
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="div">
-          {props.item.name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {props.item.description}
-        </Typography>
-        <Box display="flex" justifyContent="space-between" marginTop="16px">
-          <Typography variant="body2" color="text.secondary">
-            Calories: {props.item.calories}
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          alt={props.item.name}
+          title={props.item.name}
+          image="https://via.placeholder.com/150"
+        />
+        <CardContent
+          sx={{ flexGrow: 1, backgroundColor: theme.palette.primary.main }}
+        >
+          <Typography gutterBottom variant="h5" component="div">
+            {props.item.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Carbohydrates: {props.item.carbohydrates}
+            {props.item.description}
           </Typography>
-        </Box>
-        <Box display="flex" justifyContent="space-between" marginTop="16px">
-          <Typography variant="body2" color="text.secondary">
-            Protein: {props.item.protein}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Fat (Unsaturated): {props.item.fat}
-          </Typography>
-        </Box>
-      </CardContent>
+          <Box display="flex" justifyContent="space-between" marginTop="16px">
+            <Typography variant="body2" color="text.secondary">
+              Calories: {props.item.calories}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Carbohydrates: {props.item.carbohydrates}
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="space-between" marginTop="16px">
+            <Typography variant="body2" color="text.secondary">
+              Protein: {props.item.protein}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Fat (Unsaturated): {props.item.fat}
+            </Typography>
+          </Box>
+        </CardContent>
+      </CardActionArea>
     </Card>
   );
 };

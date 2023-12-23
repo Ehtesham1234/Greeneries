@@ -53,7 +53,7 @@ const DashboardMain = ({ children }) => {
               paddingLeft: 1,
               paddingRight: 1,
             },
-            backgroundColor: theme.palette.primary.main,
+            backgroundColor: theme.palette.background.main,
           }}
         >
           <Outlet />

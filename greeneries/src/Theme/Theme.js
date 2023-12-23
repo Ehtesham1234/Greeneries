@@ -21,46 +21,46 @@ export function useAppTheme() {
           primary:
             mode === "light"
               ? {
-                  main: "#71c74d",
+                  main: "#FFB7C5", // Pink blossom color
                 }
               : {
-                  main: "#5db238",
+                  main: "#065D29",
                 },
           secondary:
             mode === "light"
               ? {
-                  main: "#a3e289",
+                  main: "#FF83FA", // Lighter shade of pink blossom
                 }
               : {
-                  main: "#38771d",
+                  main: "#04974D",
                 },
           accent:
             mode === "light"
               ? {
-                  main: "#8be467",
+                  main: "#EE82EE", // Different shade of pink blossom
                 }
               : {
-                  main: "#3e981b",
+                  main: "#05AF46",
                 },
           background:
             mode === "light"
               ? {
-                  default: "#f8fcf7", // light mode background color
-                  paper: "#f8fcf7", // light mode paper color
+                  default: "#F5F5F5", // Light pink blossom for background
+                  paper: "#F5F5F5F", // Light pink blossom for paper
                 }
               : {
-                  default: "#040703", // dark mode background color
-                  paper: "#040703", // dark mode paper color
+                  default: "#212121",
+                  paper: "#212121",
                 },
           text:
             mode === "light"
               ? {
-                  primary: "#101a0c", // light mode primary text color
-                  secondary: "#8be467", // light mode secondary text color
+                  primary: "#8B008B", // Dark pink blossom for primary text
+                  secondary: "#FF6EB4", // Pink blossom for secondary text
                 }
               : {
-                  primary: "#eaf4e7", // dark mode primary text color
-                  secondary: "#3e981b", // dark mode secondary text color
+                  primary: "#eaf4e7",
+                  secondary: "#3e981b",
                 },
         },
         typography: {

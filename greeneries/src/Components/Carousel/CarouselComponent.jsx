@@ -2,9 +2,27 @@ import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import CardComponent from "../Card/CardComponent";
+import ParallaxBackground from "./ParralaxBackground";
+import { Box } from "@mui/material";
 
 const CarouselComponent = () => {
   var items = [
+    {
+      name: "Random Name #2",
+      description: "Probably the most random thing you have ever seen!",
+      calories: "67",
+      carbohydrates: "17.0 g",
+      protein: "0.60 g",
+      fat: "0.40 g",
+    },
+    {
+      name: "Random Name #3",
+      description: "Probably the most random thing you have ever seen!",
+      calories: "67",
+      carbohydrates: "17.0 g",
+      protein: "0.60 g",
+      fat: "0.40 g",
+    },
     {
       name: "Random Name #1",
       description: "Probably the most random thing you have ever seen!",
@@ -13,31 +31,6 @@ const CarouselComponent = () => {
       protein: "0.60 g",
       fat: "0.40 g",
     },
-    {
-      name: "Random Name #2",
-      description: "Hello World!",
-      calories: "67",
-      carbohydrates: "17.0 g",
-      protein: "0.60 g",
-      fat: "0.40 g",
-    },
-    {
-      name: "Random Name #2",
-      description: "Hello World!",
-      calories: "67",
-      carbohydrates: "17.0 g",
-      protein: "0.60 g",
-      fat: "0.40 g",
-    },
-    {
-      name: "Random Name #2",
-      description: "Hello World!",
-      calories: "67",
-      carbohydrates: "17.0 g",
-      protein: "0.60 g",
-      fat: "0.40 g",
-    },
-    // Add more items here...
   ];
 
   const responsive = {
@@ -60,20 +53,28 @@ const CarouselComponent = () => {
   };
 
   return (
-    <Carousel responsive={responsive} autoPlay={true} interval={2000} infinite>
-      {items.map((item, i) => (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <CardComponent key={i} item={item} />
-        </div>
-      ))}
-    </Carousel>
+    <ParallaxBackground>
+      <Carousel
+        responsive={responsive}
+        autoPlay={true}
+        interval={2000}
+        infinite
+      >
+        {items.map((item, i) => (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+            key={i}
+          >
+            <CardComponent key={i} item={item} />
+          </Box>
+        ))}
+      </Carousel>
+    </ParallaxBackground>
   );
 };
 

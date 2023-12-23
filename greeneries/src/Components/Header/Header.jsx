@@ -20,9 +20,7 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import { useTheme } from "@mui/material/styles";
 import { Navigate } from "react-router-dom";
 
-import ToggleColorMode, {
-  ColorModeContext,
-} from "../ToggleColorMode/ToggleColorMode"; // Import the ToggleColorMode component
+import ToggleColorMode from "../ToggleColorMode/ToggleColorMode"; // Import the ToggleColorMode component
 const drawerWidth = 240;
 
 const StyledAppBar = styled(MuiAppBar, {
@@ -174,6 +172,10 @@ export default function Header({ open, toggleDrawer }) {
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
+      <MenuItem>
+        {" "}
+        <ToggleColorMode />{" "}
+      </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -218,7 +220,7 @@ export default function Header({ open, toggleDrawer }) {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            Greeneries
+            BlossyLeaf
           </Typography>
           <Search>
             <SearchIconWrapper>
