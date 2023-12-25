@@ -24,8 +24,8 @@ const CategoryList = () => {
         justifyContent: "center",
         flexWrap: "wrap",
         gap: 2,
-        marginTop: 3,
-        marginBottom: 3,
+        marginTop: 5,
+        marginBottom: 5,
       }}
     >
       {visibleCategories.map((category, index) => (

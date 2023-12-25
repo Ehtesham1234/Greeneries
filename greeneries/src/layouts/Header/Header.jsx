@@ -15,12 +15,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 // import { logout } from "../../features/Auth/authSlice";
 // import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import { Navigate } from "react-router-dom";
 
-import ToggleColorMode from "../ToggleColorMode/ToggleColorMode"; // Import the ToggleColorMode component
+import ToggleColorMode from "../../Components/ToggleColorMode/ToggleColorMode"; // Import the ToggleColorMode component
 const drawerWidth = 240;
 
 const StyledAppBar = styled(MuiAppBar, {
@@ -131,6 +133,9 @@ export default function Header({ open, toggleDrawer }) {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        <ToggleColorMode />
+      </MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
@@ -153,6 +158,26 @@ export default function Header({ open, toggleDrawer }) {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
+        <IconButton
+          size="large"
+          aria-label="show 17 new notifications"
+          color="inherit"
+        >
+          <ShoppingCartIcon />
+          <Typography>Cart</Typography>
+        </IconButton>
+      </MenuItem>
+      <MenuItem>
+        <IconButton
+          size="large"
+          aria-label="show 17 new notifications"
+          color="inherit"
+        >
+          <StorefrontIcon />
+          <Typography>Become a seller</Typography>
+        </IconButton>
+      </MenuItem>
+      <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
             <MailIcon />
@@ -173,8 +198,7 @@ export default function Header({ open, toggleDrawer }) {
         <p>Notifications</p>
       </MenuItem>
       <MenuItem>
-        {" "}
-        <ToggleColorMode />{" "}
+        <ToggleColorMode />
       </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
@@ -251,7 +275,22 @@ export default function Header({ open, toggleDrawer }) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <ToggleColorMode />{" "}
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <ShoppingCartIcon />
+              <Typography>Cart</Typography>
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <StorefrontIcon />
+              <Typography>Become a seller</Typography>
+            </IconButton>
             <IconButton
               size="large"
               edge="end"

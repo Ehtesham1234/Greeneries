@@ -18,19 +18,24 @@ const PlantCard = ({ tree }) => {
   return (
     <Card
       sx={{
-        width: {
-          xs: "90%", // width on extra small screens
-          sm: "90%", // width on small screens
-          md: "60%", // width on medium screens
-          lg: "60%", // width on large screens
-          xl: "60%", // width on extra large screens
-        },
+        // width: {
+        //   xs: "90%", // width on extra small screens
+        //   sm: "90%", // width on small screens
+        //   md: "60%", // width on medium screens
+        //   lg: "60%", // width on large screens
+        //   xl: "60%", // width on extra large screens
+        // },
+        width: "270px",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         borderRadius: "15px",
         boxSizing: "border-box",
         marginBottom: 2,
+        transition: "transform 0.15s ease-in-out",
+        "&:hover": {
+          transform: "scale(1.05)",
+        },
       }}
     >
       <CardActionArea>

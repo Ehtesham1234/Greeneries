@@ -52,20 +52,20 @@ export function useAppTheme() {
                   default: "#212121",
                   paper: "#212121",
                 },
-          text:
-            mode === "light"
-              ? {
-                  primary: "#8B008B", // Dark pink blossom for primary text
-                  secondary: "#FF6EB4", // Pink blossom for secondary text
-                }
-              : {
-                  primary: "#eaf4e7",
-                  secondary: "#3e981b",
-                },
+          // text:
+          //   mode === "light"
+          //     ? {
+          //         primary: "#8B008B", // Dark pink blossom for primary text
+          //         secondary: "#FF6EB4", // Pink blossom for secondary text
+          //       }
+          //     : {
+          //         primary: "#eaf4e7",
+          //         secondary: "#3e981b",
+          //       },
         },
-        typography: {
-          fontFamily: "Roboto", // Your font family
-        },
+        // typography: {
+        //   fontFamily: "Roboto", // Your font family
+        // },
       }),
     [mode]
   );

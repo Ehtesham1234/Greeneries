@@ -6,8 +6,9 @@ import Box from "@mui/material/Box";
 import { Container, Toolbar, Hidden } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import Header from "../../Components/Header/Header";
-import Sidebar from "../../Components/Sidebar/Sidebar";
+import Header from "../Header/Header";
+import Sidebar from "../Sidebar/Sidebar";
+import Footer from "../Footer/Footer";
 
 const DashboardMain = ({ children }) => {
   const theme = useTheme();
@@ -58,6 +59,7 @@ const DashboardMain = ({ children }) => {
         >
           <Outlet />
         </Container>
+        <Footer />
       </Box>
     </Box>
   );

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import PlantCard from "./PlantCard";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Button, Typography } from "@mui/material";
 const PlantCardList = () => {
+  const [showMore, setShowMore] = useState(false);
   const treeData = [
     {
       name: "Japanese Maple",
@@ -64,16 +65,37 @@ const PlantCardList = () => {
       benefits: ["Strong and durable", "Provides shade", "Attracts wildlife"],
     },
   ];
+
+  const visibleTree = showMore ? treeData : treeData.slice(0, 6);
   return (
-    <Grid container spacing={2} sx={{ marginTop: 3, marginBottom: 3 }}>
-      {treeData.map((tree, i) => (
-        <Grid item xs={12} sm={6} md={6} lg={4} key={i}>
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <PlantCard tree={tree} />
+    <Box sx={{ marginTop: 1, marginBottom: 1 }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        Top Trend
+      </Typography>
+      <Grid container spacing={2} sx={{ marginTop: 3, marginBottom: 3 }}>
+        {visibleTree.map((tree, i) => (
+          <Grid item xs={12} sm={6} md={4} lg={4} key={i}>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <PlantCard tree={tree} />
+            </Box>
+          </Grid>
+        ))}
+        {treeData.length > 6 && !showMore && (
+          <Box
+            sx={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ margin: "1rem auto" }}
+              onClick={() => setShowMore(true)}
+            >
+              Show More
+            </Button>
           </Box>
-        </Grid>
-      ))}
-    </Grid>
+        )}
+      </Grid>
+    </Box>
   );
 };
 

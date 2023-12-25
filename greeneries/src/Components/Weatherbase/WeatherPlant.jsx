@@ -1,15 +1,15 @@
 import React from "react";
-import { Card, CardMedia, Typography, Box } from "@mui/material";
+import { CardMedia, Typography, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const Category = ({ image, name }) => {
+const WeatherPlant = ({ image, name }) => {
   const theme = useTheme();
   return (
     <Box sx={{ margin: 2 }}>
       <Box
         // Card
         sx={{
-          width: 150,
+          width: 200,
           margin: "1rem",
           transition: "transform 0.15s ease-in-out",
           boxShadow: "none",
@@ -43,4 +43,4 @@ const Category = ({ image, name }) => {
   );
 };
 
-export default Category;
+export default WeatherPlant;
