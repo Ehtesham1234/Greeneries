@@ -5,6 +5,7 @@ import PlantCardList from "../../Components/Plants/PlantCardList";
 import InfoCards from "../../Components/InfoCard/InfoCard";
 import WeatherPlantList from "../../Components/Weatherbase/WeatherPlantList";
 import BlogCardList from "../../Components/Blog/BlogCardList";
+import BlossyLeaf from "../BlossyLeaf/BlossyLeaf";
 
 const MainPage = () => {
   return (
@@ -16,7 +17,7 @@ const MainPage = () => {
         <InfoCards />
         <WeatherPlantList />
         <BlogCardList />
-
+        <BlossyLeaf />
         {/* season flower plant after that trending then blog then company details and foolter */}
       </main>
     </>
