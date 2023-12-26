@@ -16,6 +16,7 @@ const MainPage = () => {
         <InfoCards />
         <WeatherPlantList />
         <BlogCardList />
+
         {/* season flower plant after that trending then blog then company details and foolter */}
       </main>
     </>

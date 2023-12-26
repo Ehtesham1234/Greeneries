@@ -130,6 +130,11 @@ export default function Header({ open, toggleDrawer }) {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      PaperProps={{
+        style: {
+          backgroundColor: theme.palette.primary.main,
+        },
+      }}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
@@ -156,8 +161,13 @@ export default function Header({ open, toggleDrawer }) {
       }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
+      PaperProps={{
+        style: {
+          backgroundColor: theme.palette.primary.main,
+        },
+      }}
     >
-      <MenuItem>
+      {/* <MenuItem>
         <IconButton
           size="large"
           aria-label="show 17 new notifications"
@@ -176,7 +186,7 @@ export default function Header({ open, toggleDrawer }) {
           <StorefrontIcon />
           <Typography>Become a seller</Typography>
         </IconButton>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
@@ -197,9 +207,9 @@ export default function Header({ open, toggleDrawer }) {
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
-      <MenuItem>
+      {/* <MenuItem>
         <ToggleColorMode />
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -275,22 +285,30 @@ export default function Header({ open, toggleDrawer }) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
+          </Box>
+          <Box sx={{ display: { xs: "flex", sm: "flex", md: "flex" } }}>
+            <IconButton size="large" aria-label="Cart" color="inherit">
               <ShoppingCartIcon />
-              <Typography>Cart</Typography>
+              <Typography
+                sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+              >
+                Cart
+              </Typography>
             </IconButton>
             <IconButton
               size="large"
-              aria-label="show 17 new notifications"
+              aria-label="Become a seller"
               color="inherit"
             >
               <StorefrontIcon />
-              <Typography>Become a seller</Typography>
+              <Typography
+                sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+              >
+                Become a seller
+              </Typography>
             </IconButton>
+          </Box>
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
               edge="end"

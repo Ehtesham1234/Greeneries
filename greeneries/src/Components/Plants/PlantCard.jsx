@@ -15,17 +15,20 @@ import { useTheme } from "@mui/material/styles";
 
 const PlantCard = ({ tree }) => {
   const theme = useTheme();
+  const maxChar = 50; // Maximum number of characters to display
+  const description =
+    tree.details.length > maxChar
+      ? tree.details.substring(0, maxChar) + "... See More"
+      : tree.details;
+  const benefits =
+    tree.benefits.join(", ").length > maxChar
+      ? tree.benefits.join(", ").substring(0, maxChar) + "... See More"
+      : tree.benefits.join(", ");
+
   return (
     <Card
       sx={{
-        // width: {
-        //   xs: "90%", // width on extra small screens
-        //   sm: "90%", // width on small screens
-        //   md: "60%", // width on medium screens
-        //   lg: "60%", // width on large screens
-        //   xl: "60%", // width on extra large screens
-        // },
-        width: "270px",
+        width: "16.875rem",
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -43,7 +46,6 @@ const PlantCard = ({ tree }) => {
           component="img"
           alt={tree.name}
           height="150"
-          // image={tree.image}
           image="https://via.placeholder.com/150"
         />
         <CardContent
@@ -53,11 +55,11 @@ const PlantCard = ({ tree }) => {
             {tree.name}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            {tree.details}
+            {description}
           </Typography>
           <Rating name="rating" value={tree.rating} />
           <Typography variant="body2" color="textSecondary">
-            Benefits: {tree.benefits.join(", ")}
+            Benefits: {benefits}
           </Typography>
         </CardContent>
       </CardActionArea>
