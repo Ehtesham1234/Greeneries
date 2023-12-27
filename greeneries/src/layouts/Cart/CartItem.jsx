@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,15 +7,34 @@ import {
   CardActions,
   Grid,
   Box,
+  TextField,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useTheme } from "@emotion/react";
 
 const CartItem = ({ item }) => {
+  const [quantity, setQuantity] = useState(1);
+  const theme = useTheme();
+
+  const handleIncrease = () => {
+    setQuantity((prevQuantity) => prevQuantity + 1);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity((prevQuantity) => prevQuantity - 1);
+    }
+  };
+
   return (
     <Grid item xs={12}>
       <Card
-        sx={{ display: "flex", flexDirection: "row", "& > *": { flex: 1 } }}
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          "& > *": { flex: 1 },
+        }}
       >
         <CardContent>
           <img
@@ -31,21 +50,42 @@ const CartItem = ({ item }) => {
           }}
         >
           <CardContent>
-            <Typography variant="h5">{item.name}</Typography>
-            <Typography variant="subtitle1">{item.description}</Typography>
+            <Typography variant="h5" sx={{ color: theme.palette.text.main }}>
+              {item.name}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{ color: theme.palette.text.main }}
+            >
+              {item.description}
+            </Typography>
           </CardContent>
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Button>
+        <Box display="flex" alignItems="center" mb={2}>
+          <Button
+            variant="outlined"
+            onClick={handleDecrease}
+            sx={{ color: theme.palette.text.main }}
+          >
             <RemoveIcon />
           </Button>
-          <Typography>{item.quantity}</Typography>
-          <Button>
+          <TextField
+            value={quantity}
+            onChange={(event) => setQuantity(event.target.value)}
+            type="number"
+            InputProps={{ inputProps: { min: 1 } }}
+            size="small" // makes the TextField smaller
+            style={{
+              width: "60px",
+              margin: "0 10px",
+              color: theme.palette.text.main,
+            }}
+          />
+          <Button
+            variant="outlined"
+            onClick={handleIncrease}
+            sx={{ color: theme.palette.text.main }}
+          >
             <AddIcon />
           </Button>
         </Box>
@@ -58,7 +98,10 @@ const CartItem = ({ item }) => {
           }}
         >
           <CardContent>
-            <Typography variant="subtitle2">{`$${item.price}`}</Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{ color: theme.palette.text.main }}
+            >{`$${item.price}`}</Typography>
           </CardContent>
           <CardActions
             sx={{
@@ -66,10 +109,10 @@ const CartItem = ({ item }) => {
               flexDirection: "column",
             }}
           >
-            <Button size="small" color="primary">
+            <Button size="small" variant="h4" color="primary">
               Save for later
             </Button>
-            <Button size="small" color="primary">
+            <Button size="small" variant="h4" color="primary">
               Remove
             </Button>
           </CardActions>

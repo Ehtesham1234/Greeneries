@@ -8,6 +8,7 @@ import MainPage from "./layouts/MainPage/MainPage";
 import BlogPost from "./layouts/BlogPage/BlogPost";
 import ProductPage from "./Components/Product/ProductPage";
 import Cart from "./layouts/Cart/Cart";
+import Collection from "./layouts/Collection/Collection";
 const SignInAndSignUp = lazy(() =>
   import("./Components/SignInAndSignUp/SignInAndSignUp")
 );
@@ -24,6 +25,7 @@ function App() {
           <Route path="/blog" element={<BlogPost />} />
           <Route path="/product/buy" element={<ProductPage />} />
           <Route path="/product/cart" element={<Cart />} />
+          <Route path="/product/collection" element={<Collection />} />
           {/* chekout and collection of plants on basisi of anything with filter */}
         </Route>
       </Route>

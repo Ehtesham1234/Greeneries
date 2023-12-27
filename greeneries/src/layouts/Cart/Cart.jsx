@@ -33,11 +33,11 @@ const Cart = () => {
         }}
       >
         <Typography variant="h4">Shopping Cart</Typography>
-        <Button variant="outlined" color="primary">
+        <Button variant="h4" color="primary">
           Remove all
         </Button>
       </Box>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ paddingLeft: 5, paddingRight: 5 }}>
         {items.map((item) => (
           <CartItem key={item.id} item={item} />
         ))}
@@ -49,6 +49,8 @@ const Cart = () => {
           justifyContent: "space-between",
           alignItems: "center",
           marginTop: "16px",
+          paddingLeft: 5,
+          paddingRight: 5,
         }}
       >
         <Box>

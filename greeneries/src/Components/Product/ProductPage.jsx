@@ -65,15 +65,16 @@ const ProductPage = () => {
           height="100%"
         >
           <Typography variant="h5" gutterBottom>
-            SNEAKER COMPANY
+            BlossyLeaf
           </Typography>
           <Typography variant="h2" gutterBottom>
-            Fall Limited Edition Sneakers
+            Lily Plant
           </Typography>
           <Typography variant="body1" gutterBottom>
-            These low-profile sneakers are your perfect casual wear companion.
-            Featuring a durable rubber outer sole, they'll withstand everything
-            the weather can offer!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro error
+            corporis atque? Culpa, cumque? Dicta eaque tenetur amet. Obcaecati
+            quia nihil voluptates labore ipsam molestiae enim aperiam dicta
+            architecto unde.
           </Typography>
           <Typography variant="h4" gutterBottom>
             $125.00

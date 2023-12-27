@@ -52,16 +52,41 @@ export function useAppTheme() {
                   default: "#212121",
                   paper: "#212121",
                 },
-          // text:
-          //   mode === "light"
-          //     ? {
-          //         primary: "#8B008B", // Dark pink blossom for primary text
-          //         secondary: "#FF6EB4", // Pink blossom for secondary text
-          //       }
-          //     : {
-          //         primary: "#eaf4e7",
-          //         secondary: "#3e981b",
-          //       },
+          text:
+            mode === "light"
+              ? {
+                  primary: "#8B008B", // Dark pink blossom for primary text
+                  secondary: "#FF6EB4", // Pink blossom for secondary text
+                  main: "#000000",
+                }
+              : {
+                  primary: "#eaf4e7",
+                  secondary: "#3e981b",
+                  main: "#FFFFFF", //white
+                },
+        },
+        components: {
+          MuiCssBaseline: {
+            styleOverrides: `
+              * {
+                scrollbar-width: thin;
+                scrollbar-color: ${
+                  mode === "light" ? "#FFB7C5" : "#065D29"
+                } #F5F5F5;
+              }
+              *::-webkit-scrollbar {
+                width: 12px;
+              }
+              *::-webkit-scrollbar-track {
+                background: #F5F5F5;
+              }
+              *::-webkit-scrollbar-thumb {
+                background-color: ${mode === "light" ? "#FFB7C5" : "#065D29"};
+                border-radius: 20px;
+                border: 3px solid #F5F5F5;
+              }
+            `,
+          },
         },
         // typography: {
         //   fontFamily: "Roboto", // Your font family

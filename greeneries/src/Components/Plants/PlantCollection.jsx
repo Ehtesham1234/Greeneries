@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import PlantCard from "./PlantCard";
-import { Grid, Box, Button, Typography } from "@mui/material";
-const PlantCardList = () => {
-  const [showMore, setShowMore] = useState(false);
+import { Grid, Box } from "@mui/material";
+const PlantCollection = () => {
   const treeData = [
     {
       name: "Japanese Maple",
@@ -66,37 +65,19 @@ const PlantCardList = () => {
     },
   ];
 
-  const visibleTree = showMore ? treeData : treeData.slice(0, 4);
   return (
     <Box sx={{ marginTop: 1, marginBottom: 1 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Top Trend
-      </Typography>
       <Grid container spacing={2} sx={{ marginTop: 3, marginBottom: 3 }}>
-        {visibleTree.map((tree, i) => (
+        {treeData.map((tree, i) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
             <Box display="flex" justifyContent="center" alignItems="center">
               <PlantCard tree={tree} />
             </Box>
           </Grid>
         ))}
-        {treeData.length > 4 && !showMore && (
-          <Box
-            sx={{ display: "flex", justifyContent: "center", width: "100%" }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ margin: "1rem auto" }}
-              onClick={() => setShowMore(true)}
-            >
-              Show More
-            </Button>
-          </Box>
-        )}
       </Grid>
     </Box>
   );
 };
 
-export default PlantCardList;
+export default PlantCollection;
