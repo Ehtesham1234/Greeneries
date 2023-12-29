@@ -10,6 +10,7 @@ import ListSubheader from "@mui/material/ListSubheader";
 // import { navigationLinkAdmin } from "../../data/data";
 // import { navigationLinkSuperAdmin } from "../../data/data";
 import { NavLink } from "react-router-dom";
+import ToggleColorMode from "../../Components/ToggleColorMode/ToggleColorMode";
 const drawerWidth = 240;
 
 // const StyledDrawer = styled(MuiDrawer, {
@@ -53,7 +54,7 @@ const StyledDrawer = styled(MuiDrawer, {
       duration: theme.transitions.duration.enteringScreen,
     }),
     boxSizing: "border-box",
-    zIndex: 1, // Add this line to set the z-index
+    zIndex: 9999, // Add this line to set the z-index
     backgroundColor: theme.palette.primary.main,
     ...(!open && {
       overflowX: "hidden",
@@ -86,6 +87,7 @@ const Sidebar = ({ open, toggleDrawer }) => {
           <ListItemText primary={navigationLink.title} />
         </ListItemButton>
       ))} */}
+      <ToggleColorMode />
     </React.Fragment>
   );
 

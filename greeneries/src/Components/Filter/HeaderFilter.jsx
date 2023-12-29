@@ -1,8 +1,16 @@
 import React from "react";
-import { Box, FormControl, Select, MenuItem, Typography } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  Select,
+  MenuItem,
+  Typography,
+  TextField,
+} from "@mui/material";
+
 const HeaderFilter = () => {
   const [sortBy, setSortBy] = React.useState("");
-  const [viewAs, setViewAs] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   return (
     <Box
@@ -25,20 +33,13 @@ const HeaderFilter = () => {
           <MenuItem value="priceHighToLow">Price: High to Low</MenuItem>
         </Select>
       </FormControl>
-      <FormControl variant="outlined" size="small">
-        <Typography variant="subtitle1">View As</Typography>
-        <Select
-          value={viewAs}
-          onChange={(e) => setViewAs(e.target.value)}
-          displayEmpty
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value="grid">Grid</MenuItem>
-          <MenuItem value="list">List</MenuItem>
-        </Select>
-      </FormControl>
+      <TextField
+        variant="outlined"
+        size="small"
+        label="Search"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
     </Box>
   );
 };

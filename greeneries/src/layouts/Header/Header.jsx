@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,12 +18,13 @@ import MailIcon from "@mui/icons-material/Mail";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StorefrontIcon from "@mui/icons-material/Storefront";
+import LoginIcon from "@mui/icons-material/Login";
 // import { logout } from "../../features/Auth/authSlice";
 // import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import { Navigate } from "react-router-dom";
-
-import ToggleColorMode from "../../Components/ToggleColorMode/ToggleColorMode"; // Import the ToggleColorMode component
+import SignIn from "../SignIn/SignIn";
+import SignUp from "../SignUp/SignUp";
 const drawerWidth = 240;
 
 const StyledAppBar = styled(MuiAppBar, {
@@ -89,6 +91,12 @@ export default function Header({ open, toggleDrawer }) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const theme = useTheme();
+  const [signOpen, setSignOpen] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  const handleOpen = () => setSignOpen(true);
+  const handleClose = () => setSignOpen(false);
+
   //   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -138,9 +146,8 @@ export default function Header({ open, toggleDrawer }) {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <ToggleColorMode />
-      </MenuItem>
+      <MenuItem onClick={handleMenuClose}>My Wishlist</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My Orders</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
@@ -167,26 +174,19 @@ export default function Header({ open, toggleDrawer }) {
         },
       }}
     >
-      {/* <MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
-          aria-label="show 17 new notifications"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
           color="inherit"
         >
-          <ShoppingCartIcon />
-          <Typography>Cart</Typography>
+          <AccountCircle />
+          {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" /> */}
         </IconButton>
+        <p>Profile</p>
       </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <StorefrontIcon />
-          <Typography>Become a seller</Typography>
-        </IconButton>
-      </MenuItem> */}
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
@@ -206,22 +206,6 @@ export default function Header({ open, toggleDrawer }) {
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
-      {/* <MenuItem>
-        <ToggleColorMode />
-      </MenuItem> */}
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-          {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" /> */}
-        </IconButton>
-        <p>Profile</p>
       </MenuItem>
     </Menu>
   );
@@ -266,27 +250,35 @@ export default function Header({ open, toggleDrawer }) {
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Box>
+
           <Box sx={{ display: { xs: "flex", sm: "flex", md: "flex" } }}>
+            <IconButton
+              size="large"
+              aria-label="Cart"
+              color="inherit"
+              onClick={handleOpen}
+            >
+              <LoginIcon />
+              <Typography
+                sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+              >
+                Login
+              </Typography>
+            </IconButton>
+            {isSignUp ? (
+              <SignUp
+                handleClose={handleClose}
+                setIsSignUp={setIsSignUp}
+                open={signOpen}
+              />
+            ) : (
+              <SignIn
+                open={signOpen}
+                handleClose={handleClose}
+                setIsSignUp={setIsSignUp}
+              />
+            )}
+
             <IconButton size="large" aria-label="Cart" color="inherit">
               <ShoppingCartIcon />
               <Typography
@@ -308,6 +300,27 @@ export default function Header({ open, toggleDrawer }) {
               </Typography>
             </IconButton>
           </Box>
+
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="inherit"
+            >
+              <Badge badgeContent={4} color="error">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <Badge badgeContent={17} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          </Box>
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
@@ -319,6 +332,7 @@ export default function Header({ open, toggleDrawer }) {
               color="inherit"
             >
               <AccountCircle />
+
               {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" /> */}
             </IconButton>
           </Box>

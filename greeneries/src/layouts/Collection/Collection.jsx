@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import SidebarFilter from "../../Components/Filter/SidebarFilter";
 import HeaderFilter from "../../Components/Filter/HeaderFilter";
-import PlantCollection from "../../Components/Plants/PlantCollection";
+import PlantCollections from "../../Components/Plants/PlantCollections";
 
 const Collection = () => {
   return (
@@ -11,7 +11,7 @@ const Collection = () => {
       <Box display="flex" flexDirection="column" flexGrow={1}>
         <HeaderFilter />
         <Box flexGrow={1}>
-          <PlantCollection />
+          <PlantCollections />
         </Box>
       </Box>
     </Box>

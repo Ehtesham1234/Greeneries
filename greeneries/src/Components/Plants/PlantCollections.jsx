@@ -69,7 +69,7 @@ const PlantCollection = () => {
     <Box sx={{ marginTop: 1, marginBottom: 1 }}>
       <Grid container spacing={2} sx={{ marginTop: 3, marginBottom: 3 }}>
         {treeData.map((tree, i) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+          <Grid item xs={12} sm={6} md={6} lg={4} key={i}>
             <Box display="flex" justifyContent="center" alignItems="center">
               <PlantCard tree={tree} />
             </Box>
