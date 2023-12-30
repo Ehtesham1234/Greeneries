@@ -6,18 +6,12 @@ const ObjectId = mongoose.Schema.ObjectId;
 const UserSchema = new Schema(
   {
     role: { type: ObjectId, ref: "Role" },
+    shop: { type: ObjectId, ref: "Shop" },
+    buyer: { type: ObjectId, ref: "Buyer" },
     userId: { type: Number },
-    firstName: { type: String, trim: true },
-    lastName: { type: String },
     email: { type: String },
-    phoneNumber: { type: String,unique: true, trim: true }, //ager admin login ker rahe to email se hora tub yeh rahne per error der " required: true," 
+    phoneNumber: { type: String, unique: true, trim: true },
     password: { type: String, required: true },
-    addressOne: { type: String },
-    countryId: { type: Number },
-    stateCode: { type: String },
-    city: { type: String },
-    zipCode: { type: String },
-    profileImage: { type: String },
     phoneVerificationCode: { type: String, default: null },
     otpPhoneCodeExpiration: {
       type: Date,
@@ -32,21 +26,8 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
-    token: {
-      type: String,
-      default: null,
-    },
   },
   { timestamps: true }
 );
-
-// userSchema.pre("save", async function (next) {
-//   if (!this.isModified("password")) return next();
-
-//   const salt = await bcrypt.genSalt(10);
-//   this.password = await bcrypt.hash(this.password, salt);
-
-//   next();
-// });
 
 exports.User = mongoose.model("User", UserSchema);

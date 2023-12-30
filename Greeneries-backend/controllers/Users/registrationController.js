@@ -2,7 +2,6 @@ const { User } = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const twilio = require("twilio");
-const session = require("express-session");
 const { validationResult } = require("express-validator");
 const { Role } = require("../../models/roles/roles");
 const jwt = require("jsonwebtoken");

@@ -6,6 +6,7 @@ const session = require("express-session");
 require("dotenv").config();
 const { connectDB } = require("./config/dbConnect");
 const userRoute = require("./routes/Users/usersRoutes");
+const shopRoute = require("./routes/shop/shopRoutes");
 const adminRoute = require("./routes/Users/adminRoutes");
 const roleRoute = require("./routes/roles/rolesRoute");
 const { Role } = require("./models/roles/roles");
@@ -15,7 +16,7 @@ connectDB();
 const app = express();
 
 const roles = [
-  { id: 1, name: "super admin" },
+  { id: 1, name: "superadmin" },
   { id: 2, name: "admin" },
   { id: 3, name: "user" },
 ];
@@ -65,6 +66,7 @@ app.get("/", async (req, res, next) => {
 // app.use("/api", require("./routes/api.route"));
 app.use("/api", userRoute.router);
 app.use("/api", adminRoute.router);
+app.use("/api", shopRoute.router);
 app.use("/api/roles", roleRoute.router);
 
 //Roles
