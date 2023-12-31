@@ -28,9 +28,9 @@ exports.userRegistration = async (req, res, nex) => {
   }
 
   try {
-    const { firstName, lastName, phoneNumber, password } = req.body;
+    const { userName, phoneNumber, password } = req.body;
 
-    if (!firstName) {
+    if (!userName) {
       return res.json({
         error: "name is required",
       });
@@ -85,8 +85,7 @@ exports.userRegistration = async (req, res, nex) => {
 
     // Save user to database with status unverified
     const user = new User({
-      firstName,
-      lastName,
+      userName,
       phoneNumber,
       password: hashedPassword,
       phoneVerificationCode: otp,

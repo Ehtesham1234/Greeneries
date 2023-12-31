@@ -11,9 +11,9 @@ exports.userRegistration = async (req, res, nex) => {
   }
 
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const {userName, email, password } = req.body;
 
-    if (!firstName) {
+    if (!userName) {
       return res.json({
         error: "name is required",
       });
@@ -39,8 +39,7 @@ exports.userRegistration = async (req, res, nex) => {
 
     // Save user to database with status unverified
     const user = new User({
-      firstName,
-      lastName,
+      userName,
       email,
       password: hashedPassword,
       otpPhoneCodeExpiration: otpExpiry,
@@ -91,8 +90,7 @@ exports.userSignIn = async (req, res, nex) => {
     // Create a new object with only the properties you want to send
     let userWithoutPassword = {
       _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      userName: user.userName,
       email: user.email,
       isEmailVerified: user.isEmailVerified,
       userId: user.userId,

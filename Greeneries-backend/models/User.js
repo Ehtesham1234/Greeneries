@@ -9,6 +9,7 @@ const UserSchema = new Schema(
     shop: { type: ObjectId, ref: "Shop" },
     buyer: { type: ObjectId, ref: "Buyer" },
     userId: { type: Number },
+    userName: { type: String },
     email: { type: String },
     phoneNumber: { type: String, unique: true, trim: true },
     password: { type: String, required: true },
