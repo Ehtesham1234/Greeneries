@@ -192,7 +192,6 @@ exports.userSignIn = async (req, res, nex) => {
     const payload = { userId: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    user.token = token;
     await user.save();
     // Respond with the token and user information
     res.cookie("token", token, {

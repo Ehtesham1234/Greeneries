@@ -11,7 +11,7 @@ exports.userRegistration = async (req, res, nex) => {
   }
 
   try {
-    const {userName, email, password } = req.body;
+    const { userName, email, password } = req.body;
 
     if (!userName) {
       return res.json({
@@ -95,7 +95,6 @@ exports.userSignIn = async (req, res, nex) => {
       isEmailVerified: user.isEmailVerified,
       userId: user.userId,
       role: user.role,
-      token: user.token,
       isActive: user.isActive,
     };
 

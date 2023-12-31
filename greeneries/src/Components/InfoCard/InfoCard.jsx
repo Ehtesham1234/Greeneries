@@ -12,22 +12,22 @@ const InfoCards = () => {
     {
       icon: <StoreIcon />,
       title: "Largest Nursery",
-      description: "1.2 Million plant lovers connected with us",
+      description: "Aliquam iusto quidem et voluptates possimus error quas ut",
     },
     {
       icon: <GroupIcon />,
       title: "Lifetime Support",
-      description: "We help you grow your garden for lifetime",
+      description: "Aliquam iusto quidem et voluptates possimus error quas ut",
     },
     {
       icon: <HomeIcon />,
       title: "All India Delivery",
-      description: "Delivering greenery across India since 2014",
+      description: "Aliquam iusto quidem et voluptates possimus error quas ut",
     },
     {
       icon: <LocalShippingIcon />,
       title: "Secure Shipping",
-      description: "Diligent care taken to deliver healthy plants",
+      description: "Aliquam iusto quidem et voluptates possimus error quas ut",
     },
   ];
 

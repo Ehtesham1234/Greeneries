@@ -6,14 +6,14 @@ const Cart = () => {
   const items = [
     {
       id: 1,
-      name: "Apple Juice",
+      name: "Apple plant",
       description: "250ml",
       price: 2.99,
       image: "/dark-plant.jpeg",
     },
     {
       id: 2,
-      name: "Grapes Juice",
+      name: "Grapes plant",
       description: "250ml",
       price: 3.19,
       image: "/dark-plant.jpeg",

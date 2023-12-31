@@ -1,13 +1,12 @@
 const express = require("express");
 const createError = require("http-errors");
 const morgan = require("morgan");
-const mongoose = require("mongoose");
 const session = require("express-session");
 require("dotenv").config();
 const { connectDB } = require("./config/dbConnect");
 const userRoute = require("./routes/Users/usersRoutes");
 const shopRoute = require("./routes/shop/shopRoutes");
-const adminRoute = require("./routes/Users/adminRoutes");
+const superAdminRoute = require("./routes/Users/superAdminRoutes");
 const roleRoute = require("./routes/roles/rolesRoute");
 const { Role } = require("./models/roles/roles");
 const cors = require("cors");
@@ -59,13 +58,9 @@ app.use(
   })
 );
 
-app.get("/", async (req, res, next) => {
-  res.send({ message: "Awesome it works 🐻" });
-});
-
 // app.use("/api", require("./routes/api.route"));
 app.use("/api", userRoute.router);
-app.use("/api", adminRoute.router);
+app.use("/api", superAdminRoute.router);
 app.use("/api", shopRoute.router);
 app.use("/api/roles", roleRoute.router);
 

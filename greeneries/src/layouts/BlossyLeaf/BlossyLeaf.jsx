@@ -12,13 +12,19 @@ const BlossyLeaf = () => {
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body1" paragraph>
-            BlossyLeaf is an Indian online platform that sells plants, gardening
-            supplies, and related products. It was founded in 2014 with the aim
-            of making gardening accessible to everyone. BlossyLeaf offers a
-            variety of plants, tools, fertilizers, and other gardening
-            accessories. The platform also provides resources such as articles,
-            videos, and a gardening community for enthusiasts to share their
-            knowledge and experiences.
+            BlossyLeaf Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            Aliquam iusto quidem et voluptates possimus error quas ut ipsa aut
+            pariatur ipsum officia quibusdam tempore, assumenda earum nemo odio
+            temporibus autem fugiat quisquam in ab quasi? Nam rerum a nihil
+            minus in quis fuga sint accusamus, error praesentium eum excepturi.
+            Suscipit totam aliquam odit omnis minima eligendi ab, atque fugiat
+            beatae a, vitae ducimus modi. Vel ab quasi unde commodi corporis?
+            Harum, laboriosam! Dolore vero officiis blanditiis, quae nobis,
+            atque illum illo rerum adipisci esse cupiditate similique et quod?
+            Vel, quo corporis. Pariatur esse dolore obcaecati voluptas nostrum
+            eligendi consequuntur laborum, deserunt explicabo. Amet tempore
+            culpa ratione laborum est voluptate illo mollitia quos quasi
+            corrupti nisi, porro nostrum optio, blanditiis laudantium. .
           </Typography>
         </Grid>
         <Grid item xs={12}>

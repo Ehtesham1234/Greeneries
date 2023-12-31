@@ -1,63 +1,23 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const { User } = require("../models/User");
 
-const model = require("../models/User");
-const UsersDetails = model.UsersDetails;
+// Middleware for verifying token
+exports.verifyToken = (role) => (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token)
+    return res.status(403).send("A token is required for authentication");
 
-exposts.validateToken = async (req, res, next) => {
-  const authorizationHeader = req.headers.authorization;
-  let result;
-  if (!authorizationHeader)
-    return res.status(401).json({
-      error: true,
-      message: "Access token is missing",
-    });
-
-  const token = req.headers.authorization.split(" ")[1]; // Bearer <token>
-  // const options = {
-  //   expiresIn: "1h",
-  // };
   try {
-    let user = await UsersDetails.findOne({
-      token: token,
-    });
-    // console.log(token);
-    if (!user) {
-      result = {
-        error: true,
-        message: `Authorization error`,
-      };
-      return res.status(403).json(result);
-    }
-
-    result = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (!user.userId === result.id) {
-      result = {
-        error: true,
-        message: `Invalid token`,
-      };
-
-      return res.status(401).json(result);
-    }
-
-    // result["referralCode"] = user.referralCode;
-
-    // req.decoded = result;
-    next();
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    User.findById(decoded.userId)
+      .populate("role")
+      .exec((err, user) => {
+        if (err || !user || user.role.name !== role)
+          return res.status(401).send("Invalid role");
+        req.user = decoded;
+        next();
+      });
   } catch (err) {
-    // console.log(err);
-    if (err.name === "TokenExpiredError") {
-      result = {
-        error: true,
-        message: `TokenExpired`,
-      };
-    } else {
-      result = {
-        error: true,
-        message: `Authentication error`,
-      };
-    }
-    return res.status(403).json(result);
+    return res.status(401).send("Invalid Token");
   }
 };

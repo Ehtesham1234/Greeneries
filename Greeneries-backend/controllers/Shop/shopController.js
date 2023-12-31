@@ -1,4 +1,4 @@
-const Shop = require("../../models/Shop");
+const { Shop } = require("../../models/Shop");
 const NodeGeocoder = require("node-geocoder");
 const { User } = require("../../models/User");
 const bcrypt = require("bcryptjs");
@@ -53,7 +53,7 @@ exports.shopRegister = async (req, res) => {
   }
 
   try {
-    const { userName,phoneNumber, password } = req.body;
+    const { userName, phoneNumber, password } = req.body;
 
     if (!userName) {
       return res.json({
@@ -129,6 +129,93 @@ exports.shopRegister = async (req, res) => {
       .json({ message: "OTP sent for verification" }, "User", user);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err });
+  }
+};
+
+exports.shopSignIn = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { email, password } = req.body;
+
+    // Find the user by their phone
+    const user = await User.findOne({ email }).populate("role");
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid password" });
+    }
+
+    // User is logged in successfully
+    const payload = { userId: user._id };
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+    await user.save();
+
+    // Create a new object with only the properties you want to send
+    let userWithoutPassword = {
+      _id: user._id,
+      userName: user.userName,
+      email: user.email,
+      isEmailVerified: user.isEmailVerified,
+      userId: user.userId,
+      role: user.role,
+      isActive: user.isActive,
+    };
+
+    // Respond with the token and user information
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Success", data: userWithoutPassword });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error", error: err });
+  }
+};
+exports.createOrEditProfile = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const shopDetails = req.body;
+    const token = req.cookies.token;
+    const shoptoken = jwt.verify(token, process.env.JWT_SECRET);
+    let user = await User.findById(shoptoken.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Use 'findOneAndUpdate' with 'upsert' option
+    let shop = await Shop.findOneAndUpdate(
+      { _id: user.shop },
+      { $set: shopDetails },
+      { new: true, upsert: true }
+    );
+
+    // Update the 'shop' field in the User document if a new shop was created
+    if (!user.shop) {
+      user.shop = shop._id;
+      await user.save();
+    }
+
+    res.json(shop);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 };
