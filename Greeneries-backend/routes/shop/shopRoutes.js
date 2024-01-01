@@ -7,7 +7,7 @@ const verifyAdmin = verifyToken("admin");
 
 router.post("/shop/signup", shopController.shopRegister);
 router.post("/shop/signin", shopController.shopSignIn);
-router.get("/shops", shopController.getShops);
-router.post("/shop/profile", shopController.createOrEditProfile);
+router.get("/shops", verifyAdmin, shopController.getShops);
+router.post("/shop/profile", verifyAdmin, shopController.createOrEditProfile);
 
 exports.router = router;

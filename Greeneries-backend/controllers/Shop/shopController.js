@@ -215,7 +215,15 @@ exports.createOrEditProfile = async (req, res) => {
 
     res.json(shop);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.log(err);
+    res.status(500).json({ message: "Server error", error: err });
+  }
+};
+
+exports.addProduct = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(err);
+    res.status(500).json({ message: "Server error", error: err });
   }
 };
