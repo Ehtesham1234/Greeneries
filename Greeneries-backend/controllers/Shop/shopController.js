@@ -3,25 +3,10 @@ const NodeGeocoder = require("node-geocoder");
 const { User } = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const twilio = require("twilio");
 const { validationResult } = require("express-validator");
 const { Role } = require("../../models/roles/roles");
 const jwt = require("jsonwebtoken");
-
-const accountSid = process.env.TWILIO_ACCOUNT_SID; // Your Twilio account SID
-const authToken = process.env.TWILIO_AUTH_TOKEN; // Your Twilio auth token
-const client = twilio(accountSid, authToken);
-
-function sendOtp(phoneNumber, otp) {
-  client.messages
-    .create({
-      body: `Your OTP is ${otp}`,
-      from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
-      to: phoneNumber,
-    })
-    .then((message) => console.log(message.sid))
-    .catch((err) => console.error(err));
-}
+const { sendOtp } = require("../../utils/fileUploads");
 
 const geocoder = NodeGeocoder({
   provider: "openstreetmap",
@@ -53,7 +38,7 @@ exports.shopRegister = async (req, res) => {
   }
 
   try {
-    const { userName, phoneNumber, password } = req.body;
+    const { userName, phoneNumber, email, password } = req.body;
 
     if (!userName) {
       return res.json({
@@ -67,7 +52,12 @@ exports.shopRegister = async (req, res) => {
       });
     }
     // Check if user already exists
-    const existingUser = await User.findOne({ phoneNumber });
+    let existingUser;
+    if (email) {
+      existingUser = await User.findOne({ email });
+    } else if (phoneNumber) {
+      existingUser = await User.findOne({ phoneNumber });
+    }
     if (existingUser) {
       if (!existingUser.isPhoneVerified) {
         // Generate OTP and expiry time
@@ -75,20 +65,20 @@ exports.shopRegister = async (req, res) => {
         const otpExpiry = Date.now() + 300000; // OTP valid for 5 minutes
 
         // Save user to database with status unverified
-        user.phoneVerificationCode = otp;
-        user.isPhoneVerified = false;
-        user.otpPhoneCodeExpiration = otpExpiry;
-        await user.save();
+        existingUser.phoneVerificationCode = otp;
+        existingUser.isPhoneVerified = false;
+        existingUser.otpPhoneCodeExpiration = otpExpiry;
+        await existingUser.save();
 
         // Send OTP for verification
-        sendOtp(phoneNumber, otp);
+        sendOtp(phoneNumber || email, otp);
 
         return res
           .status(201)
           .json(
             { message: "User not verified OTP sent for verification" },
             "User",
-            user
+            existingUser
           );
       } else {
         return res
@@ -112,17 +102,17 @@ exports.shopRegister = async (req, res) => {
     const user = new User({
       userName,
       phoneNumber,
+      email,
       password: hashedPassword,
       phoneVerificationCode: otp,
       otpPhoneCodeExpiration: otpExpiry,
       isPhoneVerified: false,
-      userId: 1,
       role: roleObject._id,
     });
     await user.save();
 
     // Send OTP for verification
-    sendOtp(phoneNumber, otp);
+    sendOtp(phoneNumber || email, otp);
 
     res
       .status(201)
@@ -133,6 +123,43 @@ exports.shopRegister = async (req, res) => {
   }
 };
 
+//change kerna hai yeh user wala hai
+exports.shopVerification = async (req, res, next) => {
+  try {
+    const { phoneNumber, email, phoneVerificationCode } = req.body;
+    // Fetch user details
+    let user;
+    if (email) {
+      user = await User.findOne({ email });
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber });
+    }
+
+    // Check if user exists
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Check OTP expiry
+    if (Date.now() > user.otpPhoneCodeExpiration) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    // Verify OTP
+    if (phoneVerificationCode !== user.phoneVerificationCode) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    user.isPhoneVerified = true;
+    user.otpPhoneCodeExpiration = null;
+    user.phoneVerificationCode = null;
+    await user.save();
+    res.status(201).json({ message: "User verified successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.shopSignIn = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -140,13 +167,41 @@ exports.shopSignIn = async (req, res, next) => {
   }
 
   try {
-    const { email, password } = req.body;
+    const { phoneNumber, email, password } = req.body;
 
     // Find the user by their phone
-    const user = await User.findOne({ email }).populate("role");
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
+    }
+
+    if (!user.isPhoneVerified) {
+      // Generate OTP and expiry time
+      const otp = crypto.randomBytes(3).toString("hex");
+      const otpExpiry = Date.now() + 300000; // OTP valid for 5 minutes
+
+      // Save user to database with status unverified
+      user.phoneVerificationCode = otp;
+      user.isPhoneVerified = false;
+      user.otpPhoneCodeExpiration = otpExpiry;
+      await user.save();
+
+      // Send OTP for verification
+      sendOtp(phoneNumber || email, otp);
+
+      return res
+        .status(201)
+        .json(
+          { message: "User not verified OTP sent for verification" },
+          "User",
+          user
+        );
     }
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
@@ -165,6 +220,7 @@ exports.shopSignIn = async (req, res, next) => {
       _id: user._id,
       userName: user.userName,
       email: user.email,
+      phoneNumber: user.phoneNumber,
       isEmailVerified: user.isEmailVerified,
       userId: user.userId,
       role: user.role,
@@ -184,6 +240,128 @@ exports.shopSignIn = async (req, res, next) => {
     res.status(500).json({ message: "Server error", error: err });
   }
 };
+
+//reset Password by phoneNumber
+exports.getPasswordResetOtp = async (req, res, next) => {
+  try {
+    const { phoneNumber, email } = req.body;
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "User does not exist please Sign Up" });
+    }
+
+    // Generate OTP and expiry time
+    const otp = crypto.randomBytes(3).toString("hex");
+    const otpExpiry = Date.now() + 300000; // OTP valid for 5 minutes
+
+    // Save user to database with status unverified
+    user.otpForgetPassword = otp;
+    user.otpExpiryForgetPassword = otpExpiry;
+    await user.save();
+
+    // Send OTP for verification
+    sendOtp(phoneNumber || email, otp);
+
+    return res.status(201).json({ message: "Otp Sent to your mobile number" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+//verify otp for forget password incomplete for now
+exports.verifyOtpPassword = async (req, res, next) => {
+  try {
+    const { phoneNumber, email, otpForgetPassword } = req.body;
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
+    // Check if user exists
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Check OTP expiry
+    if (Date.now() > user.otpExpiryForgetPassword) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    // Verify OTP
+    if (otpForgetPassword !== user.otpForgetPassword) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    user.otpExpiryForgetPassword = null;
+    user.otpForgetPassword = null;
+    await user.save();
+    res.status(201).json({ message: "verified successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+//Reset Password
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { phoneNumber, email, password } = req.body;
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
+    // Check if user exists
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Bcrypt the new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Save the new password to user's data
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+//getting details of users
+exports.getShopRegistration = async (req, res) => {
+  try {
+    const { identifier } = req.params; // this can be either phoneNumber or email
+    let user;
+    if (identifier && identifier.includes("@")) {
+      user = await User.findOne({ email: identifier }).populate("role");
+    } else {
+      user = await User.findOne({ phoneNumber: identifier }).populate("role");
+    }
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    return res.status(201).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 exports.createOrEditProfile = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

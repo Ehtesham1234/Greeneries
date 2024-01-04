@@ -1,48 +1,10 @@
 const { User } = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const twilio = require("twilio");
 const { validationResult } = require("express-validator");
 const { Role } = require("../../models/roles/roles");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
-
-async function sendOtp(identifier, otp) {
-  // Check if identifier is an email
-  if (identifier.includes("@")) {
-    // Create a transporter
-    let transporter = nodemailer.createTransport({
-      service: "gmail", // replace with your email provider
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
-    // Send email
-    let info = await transporter.sendMail({
-      from: process.env.EMAIL_USERNAME, // sender address
-      to: identifier, // list of receivers
-      subject: "Your OTP", // Subject line
-      text: `Your OTP is ${otp}`, // plain text body
-    });
-
-    console.log("Message sent: %s", info.messageId);
-  } else {
-    // Send SMS
-    client.messages
-      .create({
-        body: `Your OTP is ${otp}`,
-        from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
-        to: identifier,
-      })
-      .then((message) => console.log(message.sid))
-      .catch((err) => console.error(err));
-  }
-}
+const { sendOtp } = require("../../utils/fileUploads");
 
 exports.userRegistration = async (req, res, nex) => {
   const errors = validationResult(req);
@@ -229,11 +191,24 @@ exports.userSignIn = async (req, res, nex) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
     await user.save();
+
+    let userWithoutPassword = {
+      _id: user._id,
+      userName: user.userName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      isEmailVerified: user.isEmailVerified,
+      userId: user.userId,
+      role: user.role,
+      isActive: user.isActive,
+    };
     // Respond with the token and user information
     res.cookie("token", token, {
       httpOnly: true,
     });
-    return res.status(201).json({ message: "Success", data: user });
+    return res
+      .status(201)
+      .json({ message: "Success", data: userWithoutPassword, token: token });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });
@@ -267,7 +242,7 @@ exports.getPasswordResetOtp = async (req, res, next) => {
     await user.save();
 
     // Send OTP for verification
-    sendOtp(phoneNumber, otp);
+    sendOtp(phoneNumber || email, otp);
 
     return res.status(201).json({ message: "Otp Sent to your mobile number" });
   } catch (error) {
@@ -346,7 +321,7 @@ exports.getuserRegistration = async (req, res) => {
   try {
     const { identifier } = req.params; // this can be either phoneNumber or email
     let user;
-    if (identifier.includes("@")) {
+    if (identifier && identifier.includes("@")) {
       user = await User.findOne({ email: identifier }).populate("role");
     } else {
       user = await User.findOne({ phoneNumber: identifier }).populate("role");

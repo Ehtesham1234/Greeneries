@@ -11,7 +11,7 @@ const roleRoute = require("./routes/roles/rolesRoute");
 const productRoutes = require("./routes/product/productRoutes");
 const { Role } = require("./models/roles/roles");
 const cors = require("cors");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 connectDB();
 
 const app = express();

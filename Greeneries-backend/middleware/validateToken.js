@@ -13,6 +13,7 @@ exports.verifyToken = (role) => async (req, res, next) => {
     if (!user || user.role.name !== role)
       return res.status(401).send("Invalid role");
     req.user = decoded;
+    console.log("user.role.name"), user.role.name;
     next();
   } catch (err) {
     return res.status(401).send("Invalid Token");

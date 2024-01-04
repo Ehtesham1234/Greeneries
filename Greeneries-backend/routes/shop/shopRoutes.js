@@ -6,7 +6,28 @@ const { verifyToken } = require("../../middleware/validateToken");
 const verifyAdmin = verifyToken("admin");
 
 router.post("/shop/signup", shopController.shopRegister);
+router.post("/shop/verification", shopController.shopVerification);
 router.post("/shop/signin", shopController.shopSignIn);
+router.post(
+  "/shop/forgetpassword",
+  verifyAdmin,
+  shopController.getPasswordResetOtp
+);
+router.post(
+  "/shop/forgetpassword/verifyotp",
+  verifyAdmin,
+  shopController.verifyOtpPassword
+);
+router.post(
+  "/shop/forgetpassword/resetpassword",
+  verifyAdmin,
+  shopController.resetPassword
+);
+router.get(
+  "/shop/getshop/:num",
+  verifyAdmin,
+  shopController.getShopRegistration
+);
 router.get("/shops", verifyAdmin, shopController.getShops);
 router.patch("/shop/profile", verifyAdmin, shopController.createOrEditProfile);
 

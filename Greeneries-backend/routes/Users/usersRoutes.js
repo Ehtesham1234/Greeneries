@@ -23,8 +23,8 @@ router
   .post(
     "/forgetpassword/resetpassword",
     verifyUser,
-    userController.getPasswordResetOtp
+    userController.resetPassword
   )
-  .get("/:num", verifyUser, userController.getuserRegistration);
+  .get("/getuser/:num", verifyUser, userController.getuserRegistration);
 
 exports.router = router;

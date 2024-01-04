@@ -8,6 +8,10 @@ const ShopSchema = new Schema(
     shopAddress: { type: String, required: true },
     shopCity: { type: String, required: true },
     shopZipCode: { type: String, required: true },
+    profileImage: {
+      type: Object,
+      default: {},
+    },
     location: {
       type: { type: String },
       coordinates: [Number],

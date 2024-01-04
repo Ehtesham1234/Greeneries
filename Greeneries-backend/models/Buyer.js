@@ -11,7 +11,10 @@ const BuyerSchema = new Schema({
   stateCode: { type: String },
   city: { type: String },
   zipCode: { type: String },
-  profileImage: { type: String },
+  profileImage: {
+    type: Object,
+    default: {},
+  },
 });
 
 exports.Buyer = mongoose.model("Buyer", BuyerSchema);
