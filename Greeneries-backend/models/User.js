@@ -8,7 +8,6 @@ const UserSchema = new Schema(
     role: { type: ObjectId, ref: "Role" },
     shop: { type: ObjectId, ref: "Shop" },
     buyer: { type: ObjectId, ref: "Buyer" },
-    userId: { type: Number },
     userName: { type: String },
     email: { type: String },
     phoneNumber: { type: String, unique: true, trim: true },

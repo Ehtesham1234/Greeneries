@@ -42,9 +42,7 @@ exports.userRegistration = async (req, res, nex) => {
       userName,
       email,
       password: hashedPassword,
-      otpPhoneCodeExpiration: otpExpiry,
       isPhoneVerified: true,
-      userId: 1,
       role: roleObject._id,
     });
     await user.save();
@@ -84,7 +82,6 @@ exports.userSignIn = async (req, res, nex) => {
     const payload = { userId: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    user.token = token;
     await user.save();
 
     // Create a new object with only the properties you want to send
@@ -96,6 +93,7 @@ exports.userSignIn = async (req, res, nex) => {
       userId: user.userId,
       role: user.role,
       isActive: user.isActive,
+      token: token,
     };
 
     // Respond with the token and user information

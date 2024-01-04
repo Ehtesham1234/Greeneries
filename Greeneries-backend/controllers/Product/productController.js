@@ -40,13 +40,13 @@ exports.createProduct = async (req, res) => {
 };
 
 // Get all Products
-exports.getProducts = async(async (req, res) => {
+exports.getProducts = async (req, res) => {
   const products = await Product.find({ user: req.user.id }).sort("-createdAt");
   res.status(200).json(products);
-});
+};
 
 // Get single product
-exports.getProduct = async(async (req, res) => {
+exports.getProduct = async (req, res) => {
   const product = await Product.findById(req.params.id);
   // if product doesnt exist
   if (!product) {
@@ -59,10 +59,10 @@ exports.getProduct = async(async (req, res) => {
     throw new Error("User not authorized");
   }
   res.status(200).json(product);
-});
+};
 
 // Delete Product
-exports.deleteProduct = async(async (req, res) => {
+exports.deleteProduct = async (req, res) => {
   const product = await Product.findById(req.params.id);
   // if product doesnt exist
   if (!product) {
@@ -76,10 +76,10 @@ exports.deleteProduct = async(async (req, res) => {
   }
   await product.remove();
   res.status(200).json({ message: "Product deleted." });
-});
+};
 
 // Update Product
-exports.updateProduct = async(async (req, res) => {
+exports.updateProduct = async (req, res) => {
   const { name, category, quantity, price, description } = req.body;
   const { id } = req.params;
 
@@ -125,4 +125,4 @@ exports.updateProduct = async(async (req, res) => {
   );
 
   res.status(200).json(updatedProduct);
-});
+};

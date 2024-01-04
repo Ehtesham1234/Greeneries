@@ -5,20 +5,43 @@ const twilio = require("twilio");
 const { validationResult } = require("express-validator");
 const { Role } = require("../../models/roles/roles");
 const jwt = require("jsonwebtoken");
-
-const accountSid = process.env.TWILIO_ACCOUNT_SID; // Your Twilio account SID
-const authToken = process.env.TWILIO_AUTH_TOKEN; // Your Twilio auth token
+const nodemailer = require("nodemailer");
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
-function sendOtp(phoneNumber, otp) {
-  client.messages
-    .create({
-      body: `Your OTP is ${otp}`,
-      from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
-      to: phoneNumber,
-    })
-    .then((message) => console.log(message.sid))
-    .catch((err) => console.error(err));
+async function sendOtp(identifier, otp) {
+  // Check if identifier is an email
+  if (identifier.includes("@")) {
+    // Create a transporter
+    let transporter = nodemailer.createTransport({
+      service: "gmail", // replace with your email provider
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    // Send email
+    let info = await transporter.sendMail({
+      from: process.env.EMAIL_USERNAME, // sender address
+      to: identifier, // list of receivers
+      subject: "Your OTP", // Subject line
+      text: `Your OTP is ${otp}`, // plain text body
+    });
+
+    console.log("Message sent: %s", info.messageId);
+  } else {
+    // Send SMS
+    client.messages
+      .create({
+        body: `Your OTP is ${otp}`,
+        from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
+        to: identifier,
+      })
+      .then((message) => console.log(message.sid))
+      .catch((err) => console.error(err));
+  }
 }
 
 exports.userRegistration = async (req, res, nex) => {
@@ -28,7 +51,7 @@ exports.userRegistration = async (req, res, nex) => {
   }
 
   try {
-    const { userName, phoneNumber, password } = req.body;
+    const { userName, phoneNumber, email, password } = req.body;
 
     if (!userName) {
       return res.json({
@@ -42,7 +65,12 @@ exports.userRegistration = async (req, res, nex) => {
       });
     }
     // Check if user already exists
-    const existingUser = await User.findOne({ phoneNumber });
+    let existingUser;
+    if (email) {
+      existingUser = await User.findOne({ email });
+    } else if (phoneNumber) {
+      existingUser = await User.findOne({ phoneNumber });
+    }
     if (existingUser) {
       if (!existingUser.isPhoneVerified) {
         // Generate OTP and expiry time
@@ -50,20 +78,20 @@ exports.userRegistration = async (req, res, nex) => {
         const otpExpiry = Date.now() + 300000; // OTP valid for 5 minutes
 
         // Save user to database with status unverified
-        user.phoneVerificationCode = otp;
-        user.isPhoneVerified = false;
-        user.otpPhoneCodeExpiration = otpExpiry;
-        await user.save();
+        existingUser.phoneVerificationCode = otp;
+        existingUser.isPhoneVerified = false;
+        existingUser.otpPhoneCodeExpiration = otpExpiry;
+        await existingUser.save();
 
         // Send OTP for verification
-        sendOtp(phoneNumber, otp);
+        sendOtp(phoneNumber || email, otp);
 
         return res
           .status(201)
           .json(
             { message: "User not verified OTP sent for verification" },
             "User",
-            user
+            existingUser
           );
       } else {
         return res
@@ -87,17 +115,17 @@ exports.userRegistration = async (req, res, nex) => {
     const user = new User({
       userName,
       phoneNumber,
+      email,
       password: hashedPassword,
       phoneVerificationCode: otp,
       otpPhoneCodeExpiration: otpExpiry,
       isPhoneVerified: false,
-      userId: 1,
       role: roleObject._id,
     });
     await user.save();
 
     // Send OTP for verification
-    sendOtp(phoneNumber, otp);
+    sendOtp(phoneNumber || email, otp);
 
     res
       .status(201)
@@ -110,9 +138,14 @@ exports.userRegistration = async (req, res, nex) => {
 
 exports.userVerification = async (req, res, next) => {
   try {
-    const { phoneNumber, phoneVerificationCode } = req.body;
+    const { phoneNumber, email, phoneVerificationCode } = req.body;
     // Fetch user details
-    const user = await User.findOne({ phoneNumber });
+    let user;
+    if (email) {
+      user = await User.findOne({ email });
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber });
+    }
 
     // Check if user exists
     if (!user) {
@@ -140,7 +173,6 @@ exports.userVerification = async (req, res, next) => {
 };
 
 // sign In
-
 exports.userSignIn = async (req, res, nex) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -148,10 +180,15 @@ exports.userSignIn = async (req, res, nex) => {
   }
 
   try {
-    const { phoneNumber, password } = req.body;
+    const { phoneNumber, email, password } = req.body;
 
-    // Find the user by their phone
-    const user = await User.findOne({ phoneNumber }).populate("role");
+    // Find the user by their phone or email
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -170,7 +207,7 @@ exports.userSignIn = async (req, res, nex) => {
       await user.save();
 
       // Send OTP for verification
-      sendOtp(phoneNumber, otp);
+      sendOtp(phoneNumber || email, otp);
 
       return res
         .status(201)
@@ -179,7 +216,6 @@ exports.userSignIn = async (req, res, nex) => {
           "User",
           user
         );
-      // return res.status(400).json({ message: "User not verified" });
     }
 
     // Check password
@@ -205,11 +241,15 @@ exports.userSignIn = async (req, res, nex) => {
 };
 
 //reset Password by phoneNumber
-
 exports.getPasswordResetOtp = async (req, res, next) => {
   try {
-    const { phoneNumber } = req.body;
-    const user = await User.findOne({ phoneNumber });
+    const { phoneNumber, email } = req.body;
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
 
     if (!user) {
       return res
@@ -239,9 +279,13 @@ exports.getPasswordResetOtp = async (req, res, next) => {
 //verify otp for forget password incomplete for now
 exports.verifyOtpPassword = async (req, res, next) => {
   try {
-    const { phoneNumber, otpForgetPassword } = req.body;
-    const user = await User.findOne({ phoneNumber });
-
+    const { phoneNumber, email, otpForgetPassword } = req.body;
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
     // Check if user exists
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -268,12 +312,15 @@ exports.verifyOtpPassword = async (req, res, next) => {
 };
 
 //Reset Password
-
 exports.resetPassword = async (req, res, next) => {
   try {
-    const { phoneNumber, password } = req.body;
-    const user = await User.findOne({ phoneNumber });
-
+    const { phoneNumber, email, password } = req.body;
+    let user;
+    if (email) {
+      user = await User.findOne({ email }).populate("role");
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber }).populate("role");
+    }
     // Check if user exists
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -297,10 +344,17 @@ exports.resetPassword = async (req, res, next) => {
 //getting details of users
 exports.getuserRegistration = async (req, res) => {
   try {
-    const phoneNumber = req.params.num;
-    const registration = await User.find({ phoneNumber }).populate("role");
-    return res.status(201).json(registration);
-    // res.status(201).json(res.body);
+    const { identifier } = req.params; // this can be either phoneNumber or email
+    let user;
+    if (identifier.includes("@")) {
+      user = await User.findOne({ email: identifier }).populate("role");
+    } else {
+      user = await User.findOne({ phoneNumber: identifier }).populate("role");
+    }
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    return res.status(201).json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

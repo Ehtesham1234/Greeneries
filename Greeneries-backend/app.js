@@ -8,8 +8,10 @@ const userRoute = require("./routes/Users/usersRoutes");
 const shopRoute = require("./routes/shop/shopRoutes");
 const superAdminRoute = require("./routes/Users/superAdminRoutes");
 const roleRoute = require("./routes/roles/rolesRoute");
+const productRoutes = require("./routes/product/productRoutes");
 const { Role } = require("./models/roles/roles");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 connectDB();
 
 const app = express();
@@ -45,7 +47,7 @@ app.use(
     credentials: true,
   })
 );
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("dev"));
@@ -63,7 +65,7 @@ app.use("/api", userRoute.router);
 app.use("/api", superAdminRoute.router);
 app.use("/api", shopRoute.router);
 app.use("/api/roles", roleRoute.router);
-
+app.use("/api", productRoutes.router);
 //Roles
 
 app.use((req, res, next) => {

@@ -2,10 +2,11 @@ const express = require("express");
 const userController = require("../../controllers/Users/registrationController");
 const { body } = require("express-validator");
 const router = express.Router();
-const verifyToken = require("../../middleware/validateToken");
+const { verifyToken } = require("../../middleware/validateToken");
 const verifyUser = verifyToken("user");
+
 const validateItem = [
-  body("firstName").notEmpty().trim().escape(),
+  body("userName").notEmpty().trim().escape(),
   body("phoneNumber").notEmpty().trim().escape(),
 ];
 
