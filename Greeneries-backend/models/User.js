@@ -12,20 +12,14 @@ const UserSchema = new Schema(
     email: { type: String, trim: true },
     phoneNumber: { type: String, trim: true },
     password: { type: String, required: true },
-    phoneVerificationCode: { type: String, default: null },
-    otpPhoneCodeExpiration: {
+    otpVerificationCode: { type: String, default: null },
+    otpCodeExpiration: {
       type: Date,
       default: null,
     },
     isPhoneVerified: { type: Boolean, default: false },
-    emailVerificationCode: { type: String, default: null },
     isEmailVerified: { type: Boolean, default: false },
     isActive: { type: Number, default: 1 },
-    otpForgetPassword: { type: String, default: null },
-    otpExpiryForgetPassword: {
-      type: Date,
-      default: null,
-    },
   },
   { timestamps: true }
 );

@@ -34,15 +34,24 @@ exports.userRegistration = async (req, res, nex) => {
       existingUser = await User.findOne({ phoneNumber });
     }
     if (existingUser) {
-      if (!existingUser.isPhoneVerified) {
+      if (
+        (email && !existingUser.isEmailVerified) ||
+        (phoneNumber && !existingUser.isPhoneVerified)
+      ) {
         // Generate OTP and expiry time
         const otp = crypto.randomBytes(3).toString("hex");
         const otpExpiry = Date.now() + 300000; // OTP valid for 5 minutes
 
         // Save user to database with status unverified
-        existingUser.phoneVerificationCode = otp;
-        existingUser.isPhoneVerified = false;
-        existingUser.otpPhoneCodeExpiration = otpExpiry;
+        existingUser.otpVerificationCode = otp;
+        existingUser.otpCodeExpiration = otpExpiry;
+
+        if (email) {
+          existingUser.isEmailVerified = false;
+        } else if (phoneNumber) {
+          existingUser.isPhoneVerified = false;
+        }
+
         await existingUser.save();
 
         // Send OTP for verification
@@ -79,11 +88,16 @@ exports.userRegistration = async (req, res, nex) => {
       phoneNumber,
       email,
       password: hashedPassword,
-      phoneVerificationCode: otp,
-      otpPhoneCodeExpiration: otpExpiry,
-      isPhoneVerified: false,
       role: roleObject._id,
+      otpVerificationCode: otp,
+      otpCodeExpiration: otpExpiry,
     });
+
+    if (email) {
+      user.isEmailVerified = false;
+    } else if (phoneNumber) {
+      user.isPhoneVerified = false;
+    }
     await user.save();
 
     // Send OTP for verification
@@ -100,7 +114,7 @@ exports.userRegistration = async (req, res, nex) => {
 
 exports.userVerification = async (req, res, next) => {
   try {
-    const { phoneNumber, email, phoneVerificationCode } = req.body;
+    const { phoneNumber, email, otpVerificationCode } = req.body;
     // Fetch user details
     let user;
     if (email) {
@@ -115,18 +129,22 @@ exports.userVerification = async (req, res, next) => {
     }
 
     // Check OTP expiry
-    if (Date.now() > user.otpPhoneCodeExpiration) {
+    if (Date.now() > user.otpCodeExpiration) {
       return res.status(400).json({ message: "OTP expired" });
     }
 
     // Verify OTP
-    if (phoneVerificationCode !== user.phoneVerificationCode) {
+    if (otpVerificationCode !== user.otpVerificationCode) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    user.isPhoneVerified = true;
-    user.otpPhoneCodeExpiration = null;
-    user.phoneVerificationCode = null;
+    if (email) {
+      user.isEmailVerified = true;
+    } else if (phoneNumber) {
+      user.isPhoneVerified = true;
+    }
+    user.otpCodeExpiration = null;
+    user.otpVerificationCode = null;
     await user.save();
     res.status(201).json({ message: "User verified successfully" });
   } catch (err) {
@@ -157,15 +175,22 @@ exports.userSignIn = async (req, res, nex) => {
     }
 
     // Check if user is verified
-    if (!user.isPhoneVerified) {
+    if (
+      (email && !user.isEmailVerified) ||
+      (phoneNumber && !user.isPhoneVerified)
+    ) {
       // Generate OTP and expiry time
       const otp = crypto.randomBytes(3).toString("hex");
       const otpExpiry = Date.now() + 300000; // OTP valid for 5 minutes
 
       // Save user to database with status unverified
-      user.phoneVerificationCode = otp;
-      user.isPhoneVerified = false;
-      user.otpPhoneCodeExpiration = otpExpiry;
+      user.otpVerificationCode = otp;
+      user.otpCodeExpiration = otpExpiry;
+      if (email) {
+        user.isEmailVerified = false;
+      } else if (phoneNumber) {
+        user.isPhoneVerified = false;
+      }
       await user.save();
 
       // Send OTP for verification
@@ -198,6 +223,7 @@ exports.userSignIn = async (req, res, nex) => {
       email: user.email,
       phoneNumber: user.phoneNumber,
       isEmailVerified: user.isEmailVerified,
+      isPhoneVerified: user.isPhoneVerified,
       userId: user.userId,
       role: user.role,
       isActive: user.isActive,
@@ -237,8 +263,8 @@ exports.getPasswordResetOtp = async (req, res, next) => {
     const otpExpiry = Date.now() + 300000; // OTP valid for 5 minutes
 
     // Save user to database with status unverified
-    user.otpForgetPassword = otp;
-    user.otpExpiryForgetPassword = otpExpiry;
+    user.otpVerificationCode = otp;
+    user.otpCodeExpiration = otpExpiry;
     await user.save();
 
     // Send OTP for verification
@@ -254,7 +280,7 @@ exports.getPasswordResetOtp = async (req, res, next) => {
 //verify otp for forget password incomplete for now
 exports.verifyOtpPassword = async (req, res, next) => {
   try {
-    const { phoneNumber, email, otpForgetPassword } = req.body;
+    const { phoneNumber, email, otpVerificationCode } = req.body;
     let user;
     if (email) {
       user = await User.findOne({ email }).populate("role");
@@ -267,17 +293,17 @@ exports.verifyOtpPassword = async (req, res, next) => {
     }
 
     // Check OTP expiry
-    if (Date.now() > user.otpExpiryForgetPassword) {
+    if (Date.now() > user.otpCodeExpiration) {
       return res.status(400).json({ message: "OTP expired" });
     }
 
     // Verify OTP
-    if (otpForgetPassword !== user.otpForgetPassword) {
+    if (otpVerificationCode !== user.otpVerificationCode) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    user.otpExpiryForgetPassword = null;
-    user.otpForgetPassword = null;
+    user.otpCodeExpiration = null;
+    user.otpVerificationCode = null;
     await user.save();
     res.status(201).json({ message: "verified successfully" });
   } catch (error) {
