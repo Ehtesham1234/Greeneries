@@ -1,4 +1,4 @@
-const { Role } = require("../../models/roles/roles");
+const { Role } = require("../../models/roles/roles.models");
 
 exports.updateCapability = async (req, res, nex) => {
   try {

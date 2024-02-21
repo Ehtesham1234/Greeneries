@@ -9,9 +9,10 @@ const shopRoute = require("./routes/shop/shopRoutes");
 const superAdminRoute = require("./routes/Users/superAdminRoutes");
 const roleRoute = require("./routes/roles/rolesRoute");
 const productRoutes = require("./routes/product/productRoutes");
-const { Role } = require("./models/roles/roles");
+const { Role } = require("./models/roles/roles.models");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const { ApiError } = require("./utils/ApiError");
 connectDB();
 
 const app = express();
@@ -73,12 +74,28 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.send({
-    status: err.status || 500,
-    message: err.message,
-  });
+  if (err instanceof ApiError) {
+    res.status(err.statusCode).json({
+      status: err.statusCode,
+      message: err.message,
+      errors: err.errors,
+    });
+  } else {
+    res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      errors: [err],
+    });
+  }
 });
+
+// app.use((err, req, res, next) => {
+//   res.status(err.status || 500);
+//   res.send({
+//     status: err.status || 500,
+//     message: err.message,
+//   });
+// });
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`🚀 @ http://localhost:${PORT}`));

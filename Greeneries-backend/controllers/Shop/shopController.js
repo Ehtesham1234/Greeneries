@@ -1,10 +1,10 @@
-const { Shop } = require("../../models/Shop");
+const { Shop } = require("../../models/Shop..models");
 const NodeGeocoder = require("node-geocoder");
-const { User } = require("../../models/User");
+const { User } = require("../../models/User.models");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const { validationResult } = require("express-validator");
-const { Role } = require("../../models/roles/roles");
+const { Role } = require("../../models/roles/roles.models");
 const jwt = require("jsonwebtoken");
 const { sendOtp } = require("../../utils/fileUploads");
 

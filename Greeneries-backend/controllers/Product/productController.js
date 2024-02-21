@@ -1,4 +1,4 @@
-const Product = require("../../models/Product");
+const Product = require("../../models/Product.models");
 const { fileSizeFormatter } = require("../../utils/fileUploads");
 
 // Create Prouct
@@ -126,8 +126,6 @@ exports.updateProduct = async (req, res) => {
 
   res.status(200).json(updatedProduct);
 };
-const Product = require("../../models/Product");
-const { fileSizeFormatter } = require("../../utils/fileUploads");
 
 // Create Product
 exports.createProduct = async (req, res) => {

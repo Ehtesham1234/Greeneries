@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const productController = require("../../controllers/Product/productController");
-const { upload } = require("../../utils/fileUploads");
-const { verifyToken } = require("../../middleware/validateToken");
+const { upload } = require("../../middleware/multer.middleware");
+const { verifyToken } = require("../../middleware/validateToken.middleware");
 const verifyAdmin = verifyToken("admin");
 
 router.post(

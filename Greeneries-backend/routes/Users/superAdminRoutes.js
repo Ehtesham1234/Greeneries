@@ -2,8 +2,8 @@ const express = require("express");
 const superAdminController = require("../../controllers/Users/superAdminRegistrationController");
 const { body } = require("express-validator");
 const router = express.Router();
-const { verifyToken } = require("../../middleware/validateToken");
-
+const { verifyToken } = require("../../middleware/validateToken.middleware");
+const { upload } = require("../../middleware/multer.middleware");
 const verifySuperAdmin = verifyToken("superadmin");
 
 router
